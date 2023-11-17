@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\target;
 use Elibyy\TCPDF\Facades\TCPDF;
 use App\Models\transaksi;
-
 use Illuminate\Http\Request;
 
 class masterController extends Controller
@@ -15,7 +16,10 @@ class masterController extends Controller
      */
     public function index()
     {
-        return view('master_target.index');
+        $master = transaksi::select('*')
+        ->get();
+
+        return view('master_target.index',compact('master'));
     }
 
     /**
@@ -25,66 +29,42 @@ class masterController extends Controller
      */
     public function create()
     {
-        return view('master_target.create');
+        $target = target::select('*')
+        ->pluck('id_target','kode_rekening');
+
+
+        $via_bayar_list = [
+            1 => 'Bendahara',
+            2 => 'Bank',
+        ];
+        return view('master_target.create',compact('via_bayar_list','target'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function processSave(Request $request)
     {
-        // $data = [
-        //     ''
-        // ];
+        $dataMaster = array(
+            'id_target' => $request->id_target,
+            'via_bayar' => $request->via_bayar,
+            'tanggal'   => $request->tanggal,
+            'jumlah'    => $request->jumlah,
+        );
+        $data = transaksi::create($dataMaster);
+        if ($data) {
+            return redirect('/master');
+        } else {
+            return redirect('/master/create');
+        }
+    }
+    public function getRekening($id_target)
+    {
+        $data = transaksi::select('*')
+        ->where('id_target',$id_target)
+        ->first();
+
+        return $data['kode_rekening'];
+       
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Ht tp\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 
     public function print()
     {
@@ -154,7 +134,7 @@ class masterController extends Controller
     <td style=\"text-align: right; \" width=\" 50% \">
     
     </td>
-</tr>
+    </tr>
 
     </table>
      <div>-------------------------------</div>
@@ -187,7 +167,7 @@ class masterController extends Controller
     <table style=\" font-size:9px; \" width=\" 100% \" border=\"0\">
     <tr>
         <td width=\" 35% \" style=\"text-align: left; font-weight:bold;\"></td>
-        <td width=\" 50% \" style=\"text-align: right; font-weight:bold;\">Total : </td>
+        <td width=\" 50% \" style=\"text-align: right; font-weight:bold;\">Total :</td>
     </tr>
     ";
 

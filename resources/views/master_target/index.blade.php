@@ -1,3 +1,5 @@
+
+
 @extends('layout.template')
         <!-- START DATA -->
         @section('konten')
@@ -13,7 +15,7 @@
                 
                 <!-- TOMBOL TAMBAH DATA -->
                 <div class="pb-3">
-                  <a href='' class="btn btn-primary">+ Tambah Data</a>
+                  <a href="{{ url('master/create') }}" class="btn btn-primary">+ Tambah Data</a>
                   <a href="{{ route('print-master') }}" class="btn btn-primary">Cetak Report</a>
                 </div>
           
@@ -21,25 +23,34 @@
                     <thead>
                         <tr>
                             <th class="col-md-1">No</th>
-                            <th class="col-md-3">Kode Rekening</th>
-                            <th class="col-md-4">Target</th>
-                            <th class="col-md-2">Tanggal Mulai</th>
-                            <th class="col-md-2">Tanggal Berakhir</th>
+                            <th class="col-md-3">Id Target</th>
+                            <th class="col-md-4">Via Bayar</th>
+                            <th class="col-md-2">Tanggal</th>
+                            <th class="col-md-2">Jumlah</th>
                             <th class="col-md-3">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                    
+                    <?php $no = 1; ?>
+                    @foreach($master as $row)
                         <tr>
-                            <td>1</td>
-                            <td>41101.01</td>
-                            <td>60.500.000</td>
-                            <td>01-01-2022</td>
-                            <td>01-31-2022</td>
+                            <td>{{ $no }}</td>
+                            <td>{{ $row->id_target }}</td>
+                            <?php if($row->via_bayar == 1) {  ?>
+                                <td>Bendahara</td>
+                            <?php } ?>
+                            <?php if($row->via_bayar == 2) { ?>
+                                <td>Bank</td>
+                            <?php } ?>
+                            <td>{{ $row->tanggal }}</td>
+                            <td>{{ $row->jumlah }}</td>
                             <td>
                                 <a href='' class="btn btn-warning btn-sm">Edit</a>
                                 <a href='' class="btn btn-danger btn-sm">Del</a>
                             </td>
                         </tr>
+                    @endforeach
                     </tbody>
                 </table>     
           </div>

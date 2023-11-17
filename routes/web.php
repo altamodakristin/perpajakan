@@ -19,7 +19,7 @@ Route::get('/', function () {
 });
 
 // Route::resource('master',masterController::class);
-Route::get('/master', [masterController::class, 'create'])->name('create-master');
 Route::get('/master', [masterController::class, 'index'])->name('index-master');
+Route::get('/master/create', [masterController::class, 'create'])->name('create-master');
+Route::post('/master/create/save', [masterController::class, 'processSave'])->name('save-master');
 Route::get('/master/print', [masterController::class, 'print'])->name('print-master');
-
